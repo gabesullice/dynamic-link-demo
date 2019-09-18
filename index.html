@@ -5,16 +5,16 @@
     <script type="text/javascript" src="/server.js"></script>
     <script type="text/javascript" src="/client.js"></script>
   </head>
-  <body class="container vw-100 vh-100 mw-100">
-    <div class="row">
-      <div id="server" class=" vh-100 col-6 p-0 border-right border-dark">
+  <body class="container vw-md-100 vh-md-100 mw-100">
+    <div class="row d-flex vh-100">
+      <div id="server" class="col-sm-6 p-0 bg-light">
         <div class="container">
           <div class="row">
             <div class="col">
               <div id="availability" class="row bg-info text-white">
                 <form class="col form-inline my-3">
                   <label for="stock" class="mr-2">Stock</label>
-                  <input id="stock" class="form-control flex-fill mr-sm-4" style="min-width: 10em;" type="number" name="stock" size="10" min="0" max="3" placeholder="0 (Out of Stock)">
+                  <input id="stock" class="form-control flex-fill mr-sm-4" style="min-width: 10em;" type="number" name="stock" size="10" min="0" step="1" placeholder="0 (Out of Stock)">
                   <div class="form-check mt-3 mt-md-0">
                     <input id="discontinued" class="form-check-input mr-2" type="checkbox" name="discontinued">
                     <label for="discontinued" class="form-check-label">Discontinued</label>
@@ -30,7 +30,7 @@
           </div>
         </div>
       </div>
-      <div id="client" class="col-6 p-4 d-flex align-items-center justify-content-center">
+      <div id="client" class="col p-4 flex-grow-1 d-flex align-items-center justify-content-center">
         <div id="root"></div>
       </div>
     </div>
