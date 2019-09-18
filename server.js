@@ -1,6 +1,6 @@
 const links = {
   available: {
-    href: "/purchase",
+    href: "/purchases",
     rel: "add",
     params: {
       title: "Buy now!",
