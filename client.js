@@ -29,44 +29,14 @@ const parseLink = function (linkContainer) {
   return JSON.parse(linkContainer.innerHTML);
 }
 
-const renderLink = function (link, setContent) {
-  const originalLink = copyLink(link);
-
-  const button = createButton(link.params.title, 'btn-primary');
-  onClick(button, function () { processLink(link, setContent) });
-
-  setContent(button);
-}
-
-const renderContent = function (parent, children) {
-  while (parent.firstChild) {
-    parent.removeChild(root.firstChild);
-  }
-  [children].flat().forEach(function (child) {
-    parent.appendChild(child);
-  });
-}
-
-const renderComponent = function (id) {
-  const linkContainer = document.getElementById('json');
-  const root = document.getElementById('root');
-  const setContent = function (content) {
-    renderContent(root, content);
-  };
-  onDOMChange(linkContainer, function () {
-    renderLink(parseLink(linkContainer), setContent);
-  });
-  renderLink(parseLink(linkContainer), setContent);
-};
-
 const processLink = function (link, setContent) {
   if (link.params.confirm) {
     const confirmationText = typeof link.params.confirm === 'string' ? link.params.confirm : 'Are you sure?';
     delete(link.params.confirm);
     const confirmButton = createButton(confirmationText, 'btn-warning');
-    onClick(confirmButton, function () { processLink(link, setContent) });
+    onClick(confirmButton, followLink(link, setContent));
     const cancelButton = createButton('Cancel', 'btn-danger');
-    onClick(cancelButton, function () { renderComponent() });
+    onClick(cancelButton, function () { load() });
     setContent([confirmButton, cancelButton]);
   }
   else {
@@ -79,12 +49,37 @@ const processLink = function (link, setContent) {
         setContent(createFromHTML(`GET ${link.href}`));
         break
     }
-    setTimeout(function () {
-      renderComponent();
-    }, 2000);
+    setTimeout(function () { load() }, 2000);
   }
 };
 
-window.addEventListener('DOMContentLoaded', function () {
-  renderComponent();
-});
+const followLink = function (link, setContent) {
+  return function () { processLink(link, setContent) };
+};
+
+const renderContent = function (parent, children) {
+  while (parent.firstChild) {
+    parent.removeChild(root.firstChild);
+  }
+  [children].flat().forEach(function (child) {
+    parent.appendChild(child);
+  });
+}
+
+const renderComponent = function (root, link) {
+  const setContent = function (content) { renderContent(root, content) };
+  const button = createButton(link.params.title, 'btn-primary');
+  onClick(button, followLink(link, setContent));
+  renderContent(root, button)
+};
+
+const load = function (firstLoad = false) {
+  const linkContainer = document.getElementById('json');
+  const root = document.getElementById('root');
+  if (firstLoad) {
+    onDOMChange(linkContainer, load);
+  }
+  renderComponent(root, parseLink(linkContainer));
+};
+
+window.addEventListener('DOMContentLoaded', function () { load(true) });
