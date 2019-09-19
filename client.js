@@ -36,7 +36,7 @@ const processLink = function (link, setContent) {
     const confirmButton = createButton(confirmationText, 'btn-warning');
     onClick(confirmButton, followLink(link, setContent));
     const cancelButton = createButton('Cancel', 'btn-danger');
-    onClick(cancelButton, function () { load() });
+    onClick(cancelButton, reload());
     setContent([confirmButton, cancelButton]);
   }
   else {
@@ -49,7 +49,7 @@ const processLink = function (link, setContent) {
         setContent(createFromHTML(`GET ${link.href}`));
         break
     }
-    setTimeout(function () { load() }, 2000);
+    setTimeout(reload(), 2000);
   }
 };
 
@@ -73,13 +73,19 @@ const renderComponent = function (root, link) {
   renderContent(root, button)
 };
 
-const load = function (firstLoad = false) {
-  const linkContainer = document.getElementById('json');
-  const root = document.getElementById('root');
-  if (firstLoad) {
-    onDOMChange(linkContainer, load);
-  }
-  renderComponent(root, parseLink(linkContainer));
+const reload = function () {
+  return load(false);
 };
 
-window.addEventListener('DOMContentLoaded', function () { load(true) });
+const load = function (firstLoad = true) {
+  return function () {
+    const linkContainer = document.getElementById('json');
+    const root = document.getElementById('root');
+    if (firstLoad) {
+      onDOMChange(linkContainer, reload());
+    }
+    renderComponent(root, parseLink(linkContainer));
+  }
+};
+
+window.addEventListener('DOMContentLoaded', load());
