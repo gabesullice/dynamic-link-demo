@@ -33,9 +33,7 @@ const renderLink = function (link, setContent) {
   const originalLink = copyLink(link);
 
   const button = createButton(link.params.title, 'btn-primary');
-  button.addEventListener('click', function () {
-    processLink(link, setContent)
-  });
+  onClick(button, function () { processLink(link, setContent) });
 
   setContent(button);
 }
